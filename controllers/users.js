@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const { ValidationError, CastError } = mongoose.Error;
 const User = require('../models/user');
 
@@ -22,7 +23,6 @@ const getUsers = (req, res) => {
 
 const getUsersId = (req, res) => {
   User.findById(req.params.userId)
-    .orFail()
     .then((user) => {
       if (!user) {
         res.status(ERROR_NOT_FOUND).send({
@@ -36,7 +36,6 @@ const getUsersId = (req, res) => {
       if (err instanceof CastError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
-          ...err,
         });
         return;
       }
@@ -77,7 +76,7 @@ const updateUser = (req, res) => {
         });
         return;
       }
-      res.status(CREATED_CODE).send({ data: user });
+      res.status(SUCCESS_CODE).send({ data: user });
     })
     .catch((err) => {
       if (err instanceof ValidationError) {
@@ -106,7 +105,7 @@ const updateAvatar = (req, res) => {
         });
         return;
       }
-      res.status(CREATED_CODE).send({ data: user });
+      res.status(SUCCESS_CODE).send({ data: user });
     })
     .catch((err) => {
       if (err instanceof ValidationError) {
@@ -121,4 +120,6 @@ const updateAvatar = (req, res) => {
     });
 };
 
-module.exports = { getUsers, getUsersId, createUser, updateUser, updateAvatar };
+module.exports = {
+  getUsers, getUsersId, createUser, updateUser, updateAvatar,
+};

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const { ValidationError, CastError } = mongoose.Error;
 const Card = require('../models/card');
 
@@ -46,7 +47,7 @@ const deleteCard = (req, res) => {
         });
         return;
       }
-      res.status(SUCCESS_CODE).send({ message: 'Пост удален'});
+      res.status(SUCCESS_CODE).send({ message: 'Пост удален' });
     })
     .catch((err) => {
       if (err instanceof CastError) {
@@ -117,4 +118,6 @@ const dislikeCard = (req, res) => {
     });
 };
 
-module.exports = { getCards, createCard, deleteCard, likeCard, dislikeCard };
+module.exports = {
+  getCards, createCard, deleteCard, likeCard, dislikeCard,
+};
