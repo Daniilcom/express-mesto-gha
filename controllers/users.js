@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { ValidationError } = mongoose.Error;
+const { ValidationError, CastError } = mongoose.Error;
 const User = require('../models/user');
 
 const {
@@ -22,6 +22,7 @@ const getUsers = (req, res) => {
 
 const getUsersId = (req, res) => {
   User.findById(req.params.userId)
+    .orFail()
     .then((user) => {
       if (!user) {
         res.status(ERROR_NOT_FOUND).send({
@@ -32,7 +33,7 @@ const getUsersId = (req, res) => {
       res.status(SUCCESS_CODE).send({ data: user });
     })
     .catch((err) => {
-      if (err instanceof ValidationError) {
+      if (err instanceof CastError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
           ...err,

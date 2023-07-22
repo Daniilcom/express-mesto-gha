@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { ValidationError } = mongoose.Error;
+const { ValidationError, CastError } = mongoose.Error;
 const Card = require('../models/card');
 
 const {
@@ -49,7 +49,7 @@ const deleteCard = (req, res) => {
       res.status(SUCCESS_CODE).send({ message: 'Пост удален'});
     })
     .catch((err) => {
-      if (err instanceof ValidationError) {
+      if (err instanceof CastError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
@@ -77,7 +77,7 @@ const likeCard = (req, res) => {
       res.status(SUCCESS_CODE).send({ data: card });
     })
     .catch((err) => {
-      if (err instanceof ValidationError) {
+      if (err instanceof CastError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
@@ -105,7 +105,7 @@ const dislikeCard = (req, res) => {
       res.status(SUCCESS_CODE).send({ data: card });
     })
     .catch((err) => {
-      if (err instanceof ValidationError) {
+      if (err instanceof CastError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
