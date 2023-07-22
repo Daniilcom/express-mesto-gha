@@ -1,4 +1,6 @@
+const mongoose = require('mongoose');
 const Card = require('../models/card');
+
 const {
   ERROR_CODE,
   ERROR_NOT_FOUND,
@@ -22,7 +24,7 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(CREATED_CODE).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name instanceof mongoose.ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
@@ -46,7 +48,7 @@ const deleteCard = (req, res) => {
       res.status(SUCCESS_CODE).send({ message: 'Пост удален' });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name instanceof mongoose.ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
@@ -74,7 +76,7 @@ const likeCard = (req, res) => {
       res.status(SUCCESS_CODE).send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name instanceof mongoose.ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
@@ -102,7 +104,7 @@ const dislikeCard = (req, res) => {
       res.status(SUCCESS_CODE).send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name instanceof mongoose.ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
