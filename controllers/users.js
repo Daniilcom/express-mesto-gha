@@ -31,7 +31,7 @@ const getUsersId = (req, res) => {
       res.status(SUCCESS_CODE).send({ data: user });
     })
     .catch((err) => {
-      if (err.name instanceof mongoose.CastError) {
+      if (err.name instanceof mongoose.Error.ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
           ...err,
@@ -49,10 +49,9 @@ const createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED_CODE).send({ data: user }))
     .catch((err) => {
-      if (err.name instanceof mongoose.ValidationError) {
+      if (err.name === 'ValidationError') {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
-          ...err,
         });
         return;
       }
@@ -92,7 +91,7 @@ const updateAvatar = (req, res) => {
   )
     .then((avatar) => res.status(CREATED_CODE).send({ data: avatar }))
     .catch((err) => {
-      if (err.name instanceof mongoose.ValidationError) {
+      if (err.name instanceof mongoose.Error.ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
