@@ -68,9 +68,17 @@ const updateUser = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
-    .then((userData) => res.status(CREATED_CODE).send({ data: userData }))
+    .then((user) => {
+      if (!user) {
+        res.status(ERROR_NOT_FOUND).send({
+          message: `Пост с данным id не найден. Ошибка: ${ERROR_NOT_FOUND}`,
+        });
+        return;
+      }
+      res.status(CREATED_CODE).send({ data: user });
+    })
     .catch((err) => {
       if (err instanceof ValidationError) {
         res.status(ERROR_CODE).send({
@@ -91,7 +99,15 @@ const updateAvatar = (req, res) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    .then((avatarUpd) => res.status(CREATED_CODE).send({ data: avatarUpd }))
+    .then((user) => {
+      if (!user) {
+        res.status(ERROR_NOT_FOUND).send({
+          message: `Пост с данным id не найден. Ошибка: ${ERROR_NOT_FOUND}`,
+        });
+        return;
+      }
+      res.status(CREATED_CODE).send({ data: user });
+    })
     .catch((err) => {
       if (err instanceof ValidationError) {
         res.status(ERROR_CODE).send({
