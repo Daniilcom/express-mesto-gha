@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { ValidationError } = mongoose.Error;
 const User = require('../models/user');
 
 const {
@@ -31,7 +32,7 @@ const getUsersId = (req, res) => {
       res.status(SUCCESS_CODE).send({ data: user });
     })
     .catch((err) => {
-      if (err.name instanceof mongoose.Error.ValidationError) {
+      if (err instanceof ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
           ...err,
@@ -49,7 +50,7 @@ const createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED_CODE).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
@@ -70,7 +71,7 @@ const updateUser = (req, res) => {
   )
     .then((userData) => res.status(CREATED_CODE).send({ data: userData }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
@@ -87,11 +88,11 @@ const updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
-    .then((avatar) => res.status(CREATED_CODE).send({ data: avatar }))
+    .then((avatarUpd) => res.status(CREATED_CODE).send({ data: avatarUpd }))
     .catch((err) => {
-      if (err.name instanceof mongoose.Error.ValidationError) {
+      if (err instanceof ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });

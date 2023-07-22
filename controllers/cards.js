@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { ValidationError } = mongoose.Error;
 const Card = require('../models/card');
 
 const {
@@ -24,7 +25,7 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(CREATED_CODE).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
@@ -45,10 +46,10 @@ const deleteCard = (req, res) => {
         });
         return;
       }
-      res.status(SUCCESS_CODE).send({ message: 'Пост удален' });
+      res.status(SUCCESS_CODE).send({ message: 'Пост удален'});
     })
     .catch((err) => {
-      if (err.name instanceof mongoose.Error.ValidationError) {
+      if (err instanceof ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
@@ -64,7 +65,7 @@ const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (!card) {
@@ -76,7 +77,7 @@ const likeCard = (req, res) => {
       res.status(SUCCESS_CODE).send({ data: card });
     })
     .catch((err) => {
-      if (err.name instanceof mongoose.Error.ValidationError) {
+      if (err instanceof ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
@@ -92,7 +93,7 @@ const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (!card) {
@@ -104,7 +105,7 @@ const dislikeCard = (req, res) => {
       res.status(SUCCESS_CODE).send({ data: card });
     })
     .catch((err) => {
-      if (err.name instanceof mongoose.Error.ValidationError) {
+      if (err instanceof ValidationError) {
         res.status(ERROR_CODE).send({
           message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
         });
