@@ -1,0 +1,13 @@
+const ERROR_CODE = 400;
+const ERROR_NOT_FOUND = 404;
+const ERROR_SERVER = 500;
+const SUCCESS_CODE = 200;
+const CREATED_CODE = 201;
+
+module.exports = {
+  ERROR_CODE,
+  ERROR_NOT_FOUND,
+  ERROR_SERVER,
+  SUCCESS_CODE,
+  CREATED_CODE,
+};
