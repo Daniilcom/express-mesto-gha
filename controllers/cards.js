@@ -6,6 +6,7 @@ const Card = require('../models/card');
 
 const BadReqError = require('../utils/errors/bad-req-err');
 const NotFoundError = require('../utils/errors/not-found-err');
+const Forbidden = require('../utils/errors/forbidden-err');
 const { SUCCESS_CODE, CREATED_CODE } = require('../utils/constants');
 
 const getCards = (req, res, next) => {
@@ -32,12 +33,12 @@ const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        next(new NotFoundError('Пост с данным id не найден'));
+        throw new NotFoundError('Пост с данным id не найден');
       }
-      if (card.owner !== req.user._id) {
-        next(new NotFoundError('Пост с данным id невозможно удалить'));
+      if (card.owner._id !== req.user._id) {
+        throw new Forbidden('Пост с данным id невозможно удалить');
       }
-      res.status(SUCCESS_CODE).send({ message: 'Пост удален' });
+      res.status(SUCCESS_CODE).send({ message: 'Пост удален!' });
     })
     .catch((err) => {
       if (err instanceof CastError) {

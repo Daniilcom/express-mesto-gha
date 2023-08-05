@@ -8,12 +8,15 @@ const User = require('../models/user');
 
 const BadReqError = require('../utils/errors/bad-req-err');
 const NotFoundError = require('../utils/errors/not-found-err');
+const Conflict = require('../utils/errors/conflict-err');
+
 const { SUCCESS_CODE, CREATED_CODE } = require('../utils/constants');
 
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.status(SUCCESS_CODE).send({ data: users })})
+      res.status(SUCCESS_CODE).send({ data: users });
+    })
     .catch((err) => {
       next(err);
     });
@@ -67,6 +70,9 @@ const createUser = (req, res, next) => {
       email: user.email,
     }))
     .catch((err) => {
+      if (err.code === 11000) {
+        next(new Conflict('Переданы некорректные данные'));
+      }
       if (err instanceof ValidationError) {
         next(new BadReqError('Переданы некорректные данные'));
       }
