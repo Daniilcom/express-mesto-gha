@@ -35,7 +35,7 @@ const deleteCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError('Пост с данным id не найден');
       }
-      if (card.owner._id !== req.user._id) {
+      if (card.owner._id.toString() !== req.user._id.toString()) {
         throw new Forbidden('Пост с данным id невозможно удалить');
       }
       res.status(SUCCESS_CODE).send({ message: 'Пост удален!' });
