@@ -51,7 +51,7 @@ const deleteCard = (req, res, next) => {
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: req.user._id } },
+    { $addToSet: { likes: req.user._id } },
     { new: true },
   )
     .then((card) => {
@@ -76,7 +76,7 @@ const dislikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        next(new NotFoundError('Пост с данным id не найден'));
+        throw new NotFoundError('Пост с данным id не найден');
       }
       res.status(SUCCESS_CODE).send({ data: card });
     })
