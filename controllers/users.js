@@ -9,6 +9,7 @@ const User = require('../models/user');
 const BadReqError = require('../utils/errors/bad-req-err');
 const NotFoundError = require('../utils/errors/not-found-err');
 const Conflict = require('../utils/errors/conflict-err');
+const AuthError = require('../utils/errors/auth-err');
 
 const { SUCCESS_CODE, CREATED_CODE } = require('../utils/constants');
 
