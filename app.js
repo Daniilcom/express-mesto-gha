@@ -27,10 +27,10 @@ app.use(helmet());
 
 app.post('/signup', validateRegister, createUser);
 app.post('/signin', validateLogin, login);
-app.use(auth);
-app.use('/users', usersRouter);
-app.use('/cards', cardsRouter);
-app.use('*', (req, res, next) => {
+
+app.use('/users', auth, usersRouter);
+app.use('/cards', auth, cardsRouter);
+app.use('*', auth, (req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
 });
 
