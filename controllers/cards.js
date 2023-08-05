@@ -1,68 +1,53 @@
 const mongoose = require('mongoose');
 
 const { ValidationError, CastError } = mongoose.Error;
+
 const Card = require('../models/card');
 
-const {
-  ERROR_CODE,
-  ERROR_NOT_FOUND,
-  ERROR_SERVER,
-  SUCCESS_CODE,
-  CREATED_CODE,
-} = require('../utils/constants');
+const { BadReqError } = require('../utils/errors/bad-req-err');
+const { NotFoundError } = require('../utils/errors/not-found-err');
+const { SUCCESS_CODE, CREATED_CODE } = require('../utils/constants');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.status(SUCCESS_CODE).send({ data: cards }))
-    .catch(() => {
-      res
-        .status(ERROR_SERVER)
-        .send({ message: `Ошибка на сервере: ${ERROR_SERVER}` });
+    .catch((err) => {
+      next(err);
     });
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(CREATED_CODE).send({ data: card }))
     .catch((err) => {
       if (err instanceof ValidationError) {
-        res.status(ERROR_CODE).send({
-          message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
-        });
-        return;
+        next(new BadReqError('Переданы некорректные данные'));
       }
-      res
-        .status(ERROR_SERVER)
-        .send({ message: `Ошибка на сервере: ${ERROR_SERVER}` });
+      next(err);
     });
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res.status(ERROR_NOT_FOUND).send({
-          message: `Пост с данным id не найден. Ошибка: ${ERROR_NOT_FOUND}`,
-        });
-        return;
+        next(new NotFoundError('Пост с данным id не найден'));
+      }
+      if (card.owner !== req.user._id) {
+        next(new NotFoundError('Пост с данным id невозможно удалить'));
       }
       res.status(SUCCESS_CODE).send({ message: 'Пост удален' });
     })
     .catch((err) => {
       if (err instanceof CastError) {
-        res.status(ERROR_CODE).send({
-          message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
-        });
-        return;
+        next(new BadReqError('Переданы некорректные данные'));
       }
-      res
-        .status(ERROR_SERVER)
-        .send({ message: `Ошибка на сервере: ${ERROR_SERVER}` });
+      next(err);
     });
 };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -70,27 +55,19 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(ERROR_NOT_FOUND).send({
-          message: `Пост с данным id не найден. Ошибка: ${ERROR_NOT_FOUND}`,
-        });
-        return;
+        next(new NotFoundError('Пост с данным id не найден'));
       }
       res.status(SUCCESS_CODE).send({ data: card });
     })
     .catch((err) => {
       if (err instanceof CastError) {
-        res.status(ERROR_CODE).send({
-          message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
-        });
-        return;
+        next(new BadReqError('Переданы некорректные данные'));
       }
-      res
-        .status(ERROR_SERVER)
-        .send({ message: `Ошибка на сервере: ${ERROR_SERVER}` });
+      next(err);
     });
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -98,26 +75,22 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(ERROR_NOT_FOUND).send({
-          message: `Пост с данным id не найден. Ошибка: ${ERROR_NOT_FOUND}`,
-        });
-        return;
+        next(new NotFoundError('Пост с данным id не найден'));
       }
       res.status(SUCCESS_CODE).send({ data: card });
     })
     .catch((err) => {
       if (err instanceof CastError) {
-        res.status(ERROR_CODE).send({
-          message: `Переданы некорректные данные. Ошибка: ${ERROR_CODE}`,
-        });
-        return;
+        next(new BadReqError('Переданы некорректные данные'));
       }
-      res
-        .status(ERROR_SERVER)
-        .send({ message: `Ошибка на сервере: ${ERROR_SERVER}` });
+      next(err);
     });
 };
 
 module.exports = {
-  getCards, createCard, deleteCard, likeCard, dislikeCard,
+  getCards,
+  createCard,
+  deleteCard,
+  likeCard,
+  dislikeCard,
 };
