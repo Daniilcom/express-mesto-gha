@@ -6,15 +6,14 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const { BadReqError } = require('../utils/errors/bad-req-err');
-const { NotFoundError } = require('../utils/errors/not-found-err');
+const BadReqError = require('../utils/errors/bad-req-err');
+const NotFoundError = require('../utils/errors/not-found-err');
 const { SUCCESS_CODE, CREATED_CODE } = require('../utils/constants');
 
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.status(SUCCESS_CODE).send({ data: users });
-    })
+      res.status(SUCCESS_CODE).send({ data: users })})
     .catch((err) => {
       next(err);
     });
