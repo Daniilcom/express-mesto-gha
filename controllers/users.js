@@ -113,7 +113,7 @@ const updateUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err instanceof ValidationError) {
-        next(new BadReqError('Переданы некорректные данные'));
+        next(err);
       }
       next(err);
     });
