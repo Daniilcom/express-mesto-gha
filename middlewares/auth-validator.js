@@ -7,7 +7,7 @@ module.exports.validateRegister = celebrate({
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(RegExp),
     email: Joi.string().email().required(),
-    password: Joi.string().alphanum().min(8).required(),
+    password: Joi.string().min(8).required(),
   }),
 });
 
