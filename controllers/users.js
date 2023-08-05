@@ -9,6 +9,7 @@ const User = require('../models/user');
 const BadReqError = require('../utils/errors/bad-req-err');
 const NotFoundError = require('../utils/errors/not-found-err');
 const Conflict = require('../utils/errors/conflict-err');
+const AuthError = require('../utils/errors/auth-err');
 
 const { SUCCESS_CODE, CREATED_CODE } = require('../utils/constants');
 
@@ -86,6 +87,9 @@ const login = (req, res, next) => {
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key');
+      if (!user) {
+        next(new AuthError('Пользователь с данным email не найден'));
+      }
       res
         .cookie('token', token, {
           maxAge: 3600000,
