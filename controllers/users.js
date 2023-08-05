@@ -87,9 +87,6 @@ const login = (req, res, next) => {
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key');
-      if (!user) {
-        next(new AuthError('Пользователь с данным email не найден'));
-      }
       res
         .cookie('token', token, {
           maxAge: 3600000,
@@ -97,8 +94,8 @@ const login = (req, res, next) => {
         })
         .send({ token });
     })
-    .catch((err) => {
-      next(new BadReqError(`${err.message}`));
+    .catch(() => {
+      next(new AuthError('Пользователь с данным email не найден'));
     });
 };
 
