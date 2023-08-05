@@ -12,7 +12,9 @@ const { SUCCESS_CODE, CREATED_CODE } = require('../utils/constants');
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(SUCCESS_CODE).send({ data: users }))
+    .then((users) => {
+      res.status(SUCCESS_CODE).send({ data: users });
+    })
     .catch((err) => {
       next(err);
     });

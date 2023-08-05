@@ -1,9 +1,10 @@
 const express = require('express');
 const helmet = require('helmet');
+const { errors } = require('celebrate');
 
 const mongoose = require('mongoose');
 
-const { NotFoundError } = require('./utils/errors/not-found-err');
+const NotFoundError = require('./utils/errors/not-found-err');
 
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
@@ -33,6 +34,7 @@ app.use('*', (req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
 });
 
+app.use(errors());
 app.use(errHandler);
 
 app.listen(PORT, () => {

@@ -4,8 +4,8 @@ const { ValidationError, CastError } = mongoose.Error;
 
 const Card = require('../models/card');
 
-const { BadReqError } = require('../utils/errors/bad-req-err');
-const { NotFoundError } = require('../utils/errors/not-found-err');
+const BadReqError = require('../utils/errors/bad-req-err');
+const NotFoundError = require('../utils/errors/not-found-err');
 const { SUCCESS_CODE, CREATED_CODE } = require('../utils/constants');
 
 const getCards = (req, res, next) => {
