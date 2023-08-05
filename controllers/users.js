@@ -94,8 +94,8 @@ const login = (req, res, next) => {
         })
         .send({ token });
     })
-    .catch(() => {
-      next(new AuthError('Пользователь с данным email не найден'));
+    .catch((err) => {
+      next(err);
     });
 };
 
